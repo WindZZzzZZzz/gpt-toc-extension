@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT TOC Extension Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .chat-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .assistant-message {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: #333;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+        
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.25em; }
+        h4 { font-size: 1.1em; }
+        h5 { font-size: 1em; }
+        h6 { font-size: 0.9em; }
+        
+        p {
+            margin-bottom: 16px;
+        }
+        
+        .test-instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>ChatGPT TOC Extension Test Page</h1>
+        
+        <div class="test-instructions">
+            <h3>How to Test:</h3>
+            <ol>
+                <li>Install the extension following the README instructions</li>
+                <li>Load this page in Chrome</li>
+                <li>Look for the "📋 TOC" button in the top-right corner</li>
+                <li>Click it to open the sidebar and test navigation</li>
+            </ol>
+        </div>
+
+        <div class="chat-container">
+        <div class="assistant-message" data-message-author-role="assistant">
+            <h1>Introduction to Web Development</h1>
+            
+            <p>Web development is a fascinating field that combines creativity with technical skills. In this comprehensive guide, we'll explore the fundamental concepts and technologies that power the modern web.</p>
+            
+            <h2>HTML Fundamentals</h2>
+            
+            <p>HTML (HyperText Markup Language) is the backbone of every website. It provides the structure and content that browsers render.</p>
+            
+            <h3>Basic HTML Structure</h3>
+            
+            <p>Every HTML document follows a standard structure with specific elements that define the page layout.</p>
+            
+            <h4>Document Type Declaration</h4>
+            
+            <p>The DOCTYPE declaration tells the browser which version of HTML the document uses.</p>
+            
+            <h5>HTML5 DOCTYPE</h5>
+            
+            <p>HTML5 uses a simplified DOCTYPE declaration that's much cleaner than previous versions.</p>
+            
+            <h6>Benefits of HTML5</h6>
+            
+            <p>HTML5 introduced many improvements including better semantic elements and enhanced APIs.</p>
+            
+            <h2>CSS Styling</h2>
+            
+            <p>CSS (Cascading Style Sheets) is responsible for the visual presentation of web pages.</p>
+            
+            <h3>CSS Selectors</h3>
+            
+            <p>Selectors are patterns used to select and style specific elements on a page.</p>
+            
+            <h4>Class Selectors</h4>
+            
+            <p>Class selectors allow you to apply styles to multiple elements with the same class name.</p>
+            
+            <h3>CSS Box Model</h3>
+            
+            <p>Understanding the box model is crucial for proper layout and spacing.</p>
+            
+            <h2>JavaScript Programming</h2>
+            
+            <p>JavaScript adds interactivity and dynamic behavior to web pages.</p>
+            
+            <h3>Variables and Data Types</h3>
+            
+            <p>JavaScript supports various data types including strings, numbers, and objects.</p>
+            
+            <h4>String Manipulation</h4>
+            
+            <p>Strings are sequences of characters that can be manipulated using various methods.</p>
+            
+            <h3>Functions and Scope</h3>
+            
+            <p>Functions are reusable blocks of code that can accept parameters and return values.</p>
+            
+            <h2>Responsive Design</h2>
+            
+            <p>Modern websites must work well on all devices and screen sizes.</p>
+            
+            <h3>Media Queries</h3>
+            
+            <p>Media queries allow you to apply different styles based on device characteristics.</p>
+            
+            <h4>Breakpoints</h4>
+            
+            <p>Breakpoints are specific screen widths where the layout changes to accommodate different devices.</p>
+            
+            <h2>Conclusion</h2>
+            
+            <p>Web development is an ever-evolving field that requires continuous learning and adaptation to new technologies and best practices.</p>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="assistant-message" data-message-author-role="assistant">
+            <h1>Advanced JavaScript Concepts</h1>
+            
+            <p>Let's dive deeper into some advanced JavaScript concepts that every developer should understand.</p>
+            
+            <h2>Closures</h2>
+            
+            <p>Closures are functions that have access to variables in their outer scope even after the outer function has returned.</p>
+            
+            <h3>Practical Examples</h3>
+            
+            <p>Closures are commonly used for data privacy and creating factory functions.</p>
+            
+            <h2>Promises and Async/Await</h2>
+            
+            <p>Modern JavaScript provides powerful tools for handling asynchronous operations.</p>
+            
+            <h3>Promise Basics</h3>
+            
+            <p>Promises represent the eventual completion or failure of an asynchronous operation.</p>
+            
+            <h4>Promise States</h4>
+            
+            <p>A promise can be in one of three states: pending, fulfilled, or rejected.</p>
+            
+            <h3>Async/Await Syntax</h3>
+            
+            <p>Async/await provides a more readable way to work with promises.</p>
+        </div>
+    </main>
+
+    <script src="content.js"></script>
+</body>
+</html> 

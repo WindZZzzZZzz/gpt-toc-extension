@@ -1,0 +1,34 @@
+{
+  "name": "chatgpt-toc-extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension that displays a table of contents for ChatGPT generated content in a right sidebar",
+  "main": "content.js",
+  "scripts": {
+    "test": "echo \"Open test.html in Chrome to test the extension\"",
+    "build": "echo \"Extension is ready to load in Chrome\"",
+    "dev": "echo \"Load the extension in Chrome and navigate to test.html or ChatGPT\""
+  },
+  "keywords": [
+    "chrome-extension",
+    "chatgpt",
+    "table-of-contents",
+    "toc",
+    "navigation",
+    "sidebar"
+  ],
+  "author": "Leo Z",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/chatgpt-toc-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/chatgpt-toc-extension/issues"
+  },
+  "homepage": "https://github.com/yourusername/chatgpt-toc-extension#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+} 

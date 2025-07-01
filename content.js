@@ -1,0 +1,305 @@
+// ChatGPT Table of Contents Extension
+class ChatGPTTOC {
+  constructor() {
+    this.sidebar = null;
+    this.isVisible = false;
+    this.headings = [];
+    this.responseGroups = [];
+    this.init();
+  }
+
+  init() {
+    // Wait for ChatGPT to load
+    this.waitForChatGPT();
+    
+    // Create and inject sidebar
+    this.createSidebar();
+    
+    // Add toggle button
+    this.addToggleButton();
+    
+    // Start observing for content changes
+    this.observeContentChanges();
+  }
+
+  waitForChatGPT() {
+    const checkInterval = setInterval(() => {
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        clearInterval(checkInterval);
+        this.extractHeadings();
+      }
+    }, 1000);
+  }
+
+  createSidebar() {
+    // Create sidebar container
+    this.sidebar = document.createElement('div');
+    this.sidebar.id = 'chatgpt-toc-sidebar';
+    this.sidebar.setAttribute('role', 'dialog');
+    this.sidebar.setAttribute('aria-labelledby', 'toc-title');
+    this.sidebar.setAttribute('aria-describedby', 'toc-content');
+    this.sidebar.innerHTML = `
+      <div class="toc-header">
+        <h3 id="toc-title" class="toc-title">Table of Contents</h3>
+        <button class="toc-close" id="toc-close" aria-label="Close table of contents">×</button>
+      </div>
+      <div class="toc-content" id="toc-content" role="region" aria-label="Table of contents navigation">
+        <div class="toc-loading">Loading...</div>
+      </div>
+    `;
+    
+    document.body.appendChild(this.sidebar);
+    
+    // Add close button functionality
+    const closeButton = document.getElementById('toc-close');
+    closeButton.addEventListener('click', () => {
+      this.toggleSidebar();
+    });
+    
+    // Add keyboard support for close button
+    closeButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.toggleSidebar();
+      }
+    });
+  }
+
+  addToggleButton() {
+    // Create toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'chatgpt-toc-toggle';
+    toggleButton.innerHTML = '📋 TOC';
+    toggleButton.title = 'Toggle Table of Contents';
+    toggleButton.setAttribute('aria-label', 'Toggle table of contents sidebar');
+    toggleButton.setAttribute('aria-expanded', 'false');
+    toggleButton.setAttribute('aria-controls', 'chatgpt-toc-sidebar');
+    
+    // Position the button in the top-right corner
+    toggleButton.style.cssText = `
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 10000;
+      background: #10a37f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
+    `;
+    
+    toggleButton.addEventListener('click', () => {
+      this.toggleSidebar();
+      // If sidebar is opening, refresh the TOC
+      if (!this.isVisible) {
+        setTimeout(() => {
+          this.extractHeadings();
+        }, 500);
+      }
+    });
+    
+    toggleButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.toggleSidebar();
+      }
+    });
+    
+    toggleButton.addEventListener('mouseenter', () => {
+      toggleButton.style.background = '#0d8a6f';
+    });
+    
+    toggleButton.addEventListener('mouseleave', () => {
+      toggleButton.style.background = '#10a37f';
+    });
+    
+    document.body.appendChild(toggleButton);
+    // Ensure button is visible if sidebar is hidden
+    toggleButton.style.display = this.isVisible ? 'none' : '';
+  }
+
+  toggleSidebar() {
+    this.isVisible = !this.isVisible;
+    this.sidebar.style.transform = this.isVisible ? 'translateX(0)' : 'translateX(100%)';
+    
+    // Update accessibility attributes
+    const toggleButton = document.getElementById('chatgpt-toc-toggle');
+    if (toggleButton) {
+      toggleButton.setAttribute('aria-expanded', this.isVisible.toString());
+      // Show/hide the button based on sidebar visibility
+      toggleButton.style.display = this.isVisible ? 'none' : '';
+    }
+    
+    // Focus management for accessibility
+    if (this.isVisible) {
+      // Focus the close button when opening
+      const closeButton = document.getElementById('toc-close');
+      if (closeButton) {
+        closeButton.focus();
+      }
+    }
+  }
+
+  extractHeadings() {
+    // Find all assistant message containers
+    const assistantMessages = document.querySelectorAll('[data-message-author-role="assistant"]');
+    this.responseGroups = [];
+    
+    assistantMessages.forEach((message, messageIndex) => {
+      // Find headings within this specific message
+      const headings = message.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      // Get a preview of the message content for the group title
+      const messageText = message.textContent.trim();
+      const preview = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
+      this.responseGroups.push({
+        messageIndex: messageIndex,
+        messageElement: message,
+        headings: Array.from(headings),
+        preview: preview
+      });
+    });
+    // Flatten all headings for backward compatibility
+    this.headings = this.responseGroups.flatMap(group => group.headings);
+    this.updateTOC();
+  }
+
+  isInAssistantMessage(element) {
+    // Check if the element is within an assistant message
+    let parent = element.parentElement;
+    while (parent) {
+      if (parent.getAttribute('data-message-author-role') === 'assistant' ||
+          parent.classList.contains('markdown') ||
+          parent.classList.contains('prose')) {
+        return true;
+      }
+      parent = parent.parentElement;
+    }
+    return false;
+  }
+
+  updateTOC() {
+    const tocContent = document.getElementById('toc-content');
+    
+    if (this.responseGroups.length === 0) {
+      tocContent.innerHTML = '<div class="toc-empty">No responses found</div>';
+      return;
+    }
+    
+    let tocHTML = '';
+    let globalIndex = 0;
+    
+    this.responseGroups.forEach((group, groupIndex) => {
+      // Add group header (always clickable)
+      tocHTML += `
+        <div class="toc-group-header toc-group-header-clickable" data-group="${groupIndex}">
+          <span class="toc-group-title">Response ${groupIndex + 1}</span>
+          <span class="toc-group-preview">${group.preview}</span>
+        </div>
+      `;
+      // Add headings for this group (if any)
+      group.headings.forEach((heading, headingIndex) => {
+        const level = parseInt(heading.tagName.charAt(1));
+        const text = heading.textContent.trim();
+        const indent = (level - 1) * 16;
+        tocHTML += `
+          <div class="toc-item toc-h${level}" data-group="${groupIndex}" data-heading="${headingIndex}" data-global="${globalIndex}" style="padding-left: ${indent}px;">
+            <span class="toc-text">${text}</span>
+          </div>
+        `;
+        globalIndex++;
+      });
+      // Add separator between groups (except for the last one)
+      if (groupIndex < this.responseGroups.length - 1) {
+        tocHTML += '<div class="toc-group-separator"></div>';
+      }
+    });
+    tocContent.innerHTML = tocHTML;
+    // Add click event listeners for group headers
+    const groupHeaders = tocContent.querySelectorAll('.toc-group-header-clickable');
+    groupHeaders.forEach((header) => {
+      header.addEventListener('click', () => {
+        const groupIndex = parseInt(header.getAttribute('data-group'));
+        this.scrollToResponse(groupIndex);
+      });
+    });
+    // Add click event listeners for headings
+    const tocItems = tocContent.querySelectorAll('.toc-item');
+    tocItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const groupIndex = parseInt(item.getAttribute('data-group'));
+        const headingIndex = parseInt(item.getAttribute('data-heading'));
+        this.scrollToHeading(groupIndex, headingIndex);
+      });
+    });
+  }
+
+  scrollToResponse(groupIndex) {
+    if (this.responseGroups[groupIndex] && this.responseGroups[groupIndex].messageElement) {
+      const message = this.responseGroups[groupIndex].messageElement;
+      message.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      // Optionally highlight the message
+      message.style.backgroundColor = '#e3f2fd';
+      message.style.transition = 'background-color 0.3s ease';
+      setTimeout(() => {
+        message.style.backgroundColor = '';
+      }, 2000);
+    }
+  }
+
+  scrollToHeading(groupIndex, headingIndex) {
+    if (this.responseGroups[groupIndex] && this.responseGroups[groupIndex].headings[headingIndex]) {
+      const heading = this.responseGroups[groupIndex].headings[headingIndex];
+      
+      // Smooth scroll to the heading
+      heading.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      
+      // Highlight the heading briefly
+      heading.style.backgroundColor = '#ffeb3b';
+      heading.style.transition = 'background-color 0.3s ease';
+      
+      setTimeout(() => {
+        heading.style.backgroundColor = '';
+      }, 2000);
+    }
+  }
+
+  observeContentChanges() {
+    // Poll every 2 seconds to check for content changes
+    let lastContentHash = '';
+    setInterval(() => {
+      // Only check the last assistant message
+      const assistantMessages = document.querySelectorAll('[data-message-author-role="assistant"]');
+      if (assistantMessages.length === 0) {
+        // No assistant messages, do not update TOC
+        return;
+      }
+      const lastMsg = assistantMessages[assistantMessages.length - 1];
+      let lastText = lastMsg ? lastMsg.textContent : '';
+      if (lastText !== lastContentHash) {
+        lastContentHash = lastText;
+        this.extractHeadings();
+      }
+    }, 2000);
+  }
+}
+
+// Initialize the extension when the page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    new ChatGPTTOC();
+  });
+} else {
+  new ChatGPTTOC();
+} 
