@@ -5,6 +5,9 @@ class ChatGPTTOC {
     this.isVisible = false;
     this.headings = [];
     this.responseGroups = [];
+    this.collapsedHeadings = new Set(); // Track collapsed headings by groupIndex-headingIndex
+    this.rightArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="4,3 8,6 4,9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    this.downArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="3,4 6,8 9,4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     this.init();
   }
 
@@ -62,6 +65,38 @@ class ChatGPTTOC {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         this.toggleSidebar();
+      }
+    });
+    // Attach event delegation for collapse/expand and scroll only once
+    const tocContent = document.getElementById('toc-content');
+    tocContent.addEventListener('click', (e) => {
+      const collapseIcon = e.target.closest('.toc-collapse-icon');
+      if (collapseIcon) {
+        const tocItem = collapseIcon.closest('.toc-item');
+        if (!tocItem) return;
+        const groupIndex = parseInt(tocItem.getAttribute('data-group'));
+        const headingIndex = parseInt(tocItem.getAttribute('data-heading'));
+        const collapseKey = `${groupIndex}-${headingIndex}`;
+        if (this.collapsedHeadings.has(collapseKey)) {
+          this.collapsedHeadings.delete(collapseKey);
+        } else {
+          this.collapsedHeadings.add(collapseKey);
+        }
+        tocItem.classList.toggle('collapsed');
+        this.toggleSubheadings(tocItem, groupIndex, headingIndex);
+        // Update the icon
+        const icon = tocItem.querySelector('.toc-collapse-icon');
+        if (icon) {
+          icon.innerHTML = tocItem.classList.contains('collapsed') ? this.rightArrowSVG : this.downArrowSVG;
+        }
+        return;
+      }
+      // If not collapse icon, check for toc-item (scroll)
+      const tocItem = e.target.closest('.toc-item');
+      if (tocItem) {
+        const groupIndex = parseInt(tocItem.getAttribute('data-group'));
+        const headingIndex = parseInt(tocItem.getAttribute('data-heading'));
+        this.scrollToHeading(groupIndex, headingIndex);
       }
     });
   }
@@ -185,42 +220,26 @@ class ChatGPTTOC {
 
   updateTOC() {
     const tocContent = document.getElementById('toc-content');
-    
     if (this.responseGroups.length === 0) {
       tocContent.innerHTML = '<div class="toc-empty">No responses found</div>';
       return;
     }
-    
     let tocHTML = '';
-    let globalIndex = 0;
-    
     this.responseGroups.forEach((group, groupIndex) => {
-      // Add group header (always clickable)
       tocHTML += `
         <div class="toc-group-header toc-group-header-clickable" data-group="${groupIndex}">
           <span class="toc-group-title">Response ${groupIndex + 1}</span>
           <span class="toc-group-preview">${group.preview}</span>
         </div>
       `;
-      // Add headings for this group (if any)
-      group.headings.forEach((heading, headingIndex) => {
-        const level = parseInt(heading.tagName.charAt(1));
-        const text = heading.textContent.trim();
-        const indent = (level - 1) * 16;
-        tocHTML += `
-          <div class="toc-item toc-h${level}" data-group="${groupIndex}" data-heading="${headingIndex}" data-global="${globalIndex}" style="padding-left: ${indent}px;">
-            <span class="toc-text">${text}</span>
-          </div>
-        `;
-        globalIndex++;
-      });
-      // Add separator between groups (except for the last one)
+      // Render headings as a nested tree
+      tocHTML += this.renderHeadingsTree(group.headings, groupIndex);
       if (groupIndex < this.responseGroups.length - 1) {
         tocHTML += '<div class="toc-group-separator"></div>';
       }
     });
     tocContent.innerHTML = tocHTML;
-    // Add click event listeners for group headers
+    // Group header click scrolls to response
     const groupHeaders = tocContent.querySelectorAll('.toc-group-header-clickable');
     groupHeaders.forEach((header) => {
       header.addEventListener('click', () => {
@@ -228,15 +247,56 @@ class ChatGPTTOC {
         this.scrollToResponse(groupIndex);
       });
     });
-    // Add click event listeners for headings
-    const tocItems = tocContent.querySelectorAll('.toc-item');
-    tocItems.forEach((item) => {
-      item.addEventListener('click', () => {
-        const groupIndex = parseInt(item.getAttribute('data-group'));
-        const headingIndex = parseInt(item.getAttribute('data-heading'));
-        this.scrollToHeading(groupIndex, headingIndex);
-      });
+  }
+
+  renderHeadingsTree(headings, groupIndex) {
+    // Build a tree structure from flat headings array
+    const tree = [];
+    const stack = [];
+    headings.forEach((heading, i) => {
+      const node = {
+        index: i,
+        level: parseInt(heading.tagName.charAt(1)),
+        text: heading.textContent.trim(),
+        children: [],
+        heading
+      };
+      while (stack.length && stack[stack.length - 1].level >= node.level) {
+        stack.pop();
+      }
+      if (stack.length) {
+        stack[stack.length - 1].children.push(node);
+      } else {
+        tree.push(node);
+      }
+      stack.push(node);
     });
+    // Recursively render tree
+    const renderNodes = (nodes, parentIndex = null) => {
+      let html = '';
+      nodes.forEach((node) => {
+        const collapseKey = `${groupIndex}-${node.index}`;
+        const isCollapsed = this.collapsedHeadings.has(collapseKey);
+        const hasSub = node.children.length > 0;
+        html += `<div class="toc-item toc-h${node.level}${isCollapsed ? ' collapsed' : ''}" data-group="${groupIndex}" data-heading="${node.index}" style="padding-left: ${(node.level - 1) * 16}px;">
+          ${hasSub ? `<span class=\"toc-collapse-icon\" style=\"margin-right:4px;cursor:pointer;display:inline-flex;align-items:center;\">${isCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>` : ''}
+          <span class=\"toc-text\">${node.text}</span>
+        </div>`;
+        if (hasSub) {
+          html += `<div class="toc-children" style="display:${isCollapsed ? 'none' : 'block'};">${renderNodes(node.children, node.index)}</div>`;
+        }
+      });
+      return html;
+    };
+    return renderNodes(tree);
+  }
+
+  toggleSubheadings(tocItem, groupIndex, headingIndex) {
+    // Find the next sibling .toc-children and toggle its display
+    const children = tocItem.nextElementSibling;
+    if (children && children.classList.contains('toc-children')) {
+      children.style.display = children.style.display === 'none' ? 'block' : 'none';
+    }
   }
 
   scrollToResponse(groupIndex) {

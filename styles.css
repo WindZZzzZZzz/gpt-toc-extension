@@ -348,4 +348,24 @@
   .toc-h6 .toc-text {
     color: #666;
   }
+}
+
+/* Collapse icon for headings */
+.toc-collapse-icon {
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  user-select: none;
+}
+
+/* Children container for subheadings */
+.toc-children {
+  margin-left: 0;
+  padding-left: 0;
+  transition: height 0.2s, opacity 0.2s;
+}
+
+.toc-item.collapsed + .toc-children {
+  display: none !important;
 } 

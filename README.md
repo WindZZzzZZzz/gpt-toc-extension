@@ -4,12 +4,11 @@ A Chrome extension that automatically generates and displays a table of contents
 
 ## Features
 
-- 🎯 **Automatic TOC Generation**: Automatically detects headings (H1-H6) in ChatGPT responses
-- 📍 **Smart Navigation**: Click any TOC item to jump directly to that section
-- 🎨 **Modern UI**: Clean, responsive design that works in both light and dark modes
-- ⚡ **Real-time Updates**: TOC updates automatically as new content is generated
-- 🔍 **Visual Feedback**: Highlights the target section when navigating
-- 📱 **Mobile Friendly**: Responsive design that works on different screen sizes
+- **Automatic TOC Generation**: Automatically detects headings (H1-H6) in ChatGPT responses
+- **Smart Navigation**: Click any TOC item to jump directly to that section
+- **Real-time Updates**: TOC updates automatically as new content is generated
+- **Visual Feedback**: Highlights the target section when navigating
+- **Operation Friendly**: Allow users to collapse sections in TOC
 
 ## Installation
 
@@ -24,7 +23,10 @@ A Chrome extension that automatically generates and displays a table of contents
 
 ### Method 2: Install from Chrome Web Store (When Available)
 
-*Coming soon - the extension will be available on the Chrome Web Store*
+- **Navigate to [Chrome Web Store](https://chromewebstore.google.com/detail/jjpmfdjghngpncajeffgdpfcedlpkdmg?utm_source=item-share-cb)**
+- **Install the Extension** by clicking "Add to Chrome" button
+- **Navigate to ChatGPT** at `https://chat.openai.com/`
+- **Look for the "📋 TOC" button** in the top-right corner of the page
 
 ## Usage
 
@@ -45,70 +47,6 @@ The extension:
 4. **Organizes headings** by their hierarchy (H1-H6) with proper indentation
 5. **Provides navigation** with smooth scrolling and visual highlighting
 
-## File Structure
-
-```
-gpt-toc/
-├── manifest.json          # Extension configuration
-├── content.js            # Main extension logic
-├── styles.css            # Styling for sidebar and UI
-├── README.md             # This file
-└── icons/                # Extension icons
-    ├── icon16.png        # 16x16 icon
-    ├── icon48.png        # 48x48 icon
-    └── icon128.png       # 128x128 icon
-```
-
-## Customization
-
-### Styling
-You can customize the appearance by modifying `styles.css`:
-- Change colors in the CSS variables
-- Adjust sidebar width and positioning
-- Modify animations and transitions
-
-### Functionality
-You can extend the functionality by modifying `content.js`:
-- Add support for different heading detection patterns
-- Implement additional navigation features
-- Add keyboard shortcuts
-
-## Troubleshooting
-
-### Extension Not Working?
-1. **Check if it's enabled** in `chrome://extensions/`
-2. **Refresh the ChatGPT page** after installing
-3. **Check the console** for any error messages
-4. **Ensure you're on the correct domain** (`https://chat.openai.com/`)
-
-### TOC Not Updating?
-1. **Wait for the response to complete** - the extension waits for content to finish loading
-2. **Check if headings exist** - the extension only shows content with actual headings
-3. **Try refreshing the page** if the conversation is very long
-
-### Sidebar Not Visible?
-1. **Click the "📋 TOC" button** in the top-right corner
-2. **Check if the button is visible** - it should appear on ChatGPT pages
-3. **Try scrolling** - the button might be hidden behind other elements
-
-## Development
-
-### Prerequisites
-- Basic knowledge of JavaScript, HTML, and CSS
-- Chrome browser for testing
-
-### Local Development
-1. **Make changes** to the source files
-2. **Go to `chrome://extensions/`**
-3. **Click the refresh icon** on your extension
-4. **Test on ChatGPT**
-
-### Building for Production
-1. **Replace placeholder icons** with actual PNG files
-2. **Update version number** in `manifest.json`
-3. **Test thoroughly** on different ChatGPT pages
-4. **Package for Chrome Web Store** (when ready)
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
@@ -120,10 +58,5 @@ This project is open source and available under the [MIT License](LICENSE).
 ## Support
 
 If you encounter any issues or have questions:
-1. Check the troubleshooting section above
-2. Open an issue on GitHub
-3. Check the browser console for error messages
-
----
-
-**Note**: This extension is not affiliated with OpenAI or ChatGPT. It's an independent tool designed to enhance the user experience on the ChatGPT platform. 
+1. Open an issue on GitHub
+2. Check the browser console for error messages
