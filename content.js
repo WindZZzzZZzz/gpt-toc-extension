@@ -106,7 +106,7 @@ class ChatGPTTOC {
     const toggleButton = document.createElement('button');
     toggleButton.id = 'chatgpt-toc-toggle';
     toggleButton.innerHTML = '📋 TOC';
-    toggleButton.title = 'Toggle Table of Contents';
+    toggleButton.title = 'Open Table of Contents';
     toggleButton.setAttribute('aria-label', 'Toggle table of contents sidebar');
     toggleButton.setAttribute('aria-expanded', 'false');
     toggleButton.setAttribute('aria-controls', 'chatgpt-toc-sidebar');
