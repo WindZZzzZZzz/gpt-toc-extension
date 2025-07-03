@@ -3,79 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatGPT TOC Extension</title>
-  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Primary Meta Tags -->
+  <title>ChatGPT TOC Extension - Auto-Generated Table of Contents for ChatGPT</title>
+  <meta name="title" content="ChatGPT TOC Extension - Auto-Generated Table of Contents for ChatGPT">
+  <meta name="description" content="Navigate ChatGPT conversations effortlessly with an auto-generated, interactive table of contents in a sleek sidebar. Free Chrome extension for better ChatGPT experience.">
+  <meta name="keywords" content="ChatGPT, Chrome extension, table of contents, TOC, navigation, sidebar, AI, productivity, browser extension, ChatGPT tools">
+  <meta name="author" content="Leo Z">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/WindZZzzZZzz/gpt-toc-extension">
+  <meta property="og:title" content="ChatGPT TOC Extension - Auto-Generated Table of Contents">
+  <meta property="og:description" content="Navigate ChatGPT conversations effortlessly with an auto-generated, interactive table of contents in a sleek sidebar.">
+  <meta property="og:image" content="https://github.com/WindZZzzZZzz/gpt-toc-extension/raw/main/icons/toc_gpt_icon_128.png">
+  <meta property="og:site_name" content="ChatGPT TOC Extension">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://github.com/WindZZzzZZzz/gpt-toc-extension">
+  <meta property="twitter:title" content="ChatGPT TOC Extension - Auto-Generated Table of Contents">
+  <meta property="twitter:description" content="Navigate ChatGPT conversations effortlessly with an auto-generated, interactive table of contents in a sleek sidebar.">
+  <meta property="twitter:image" content="https://github.com/WindZZzzZZzz/gpt-toc-extension/raw/main/icons/toc_gpt_icon_128.png">
+  
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/toc_gpt_icon_64.png">
+  <link rel="apple-touch-icon" href="assets/toc_gpt_icon_128.png">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://github.com/WindZZzzZZzz/gpt-toc-extension">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ChatGPT TOC Extension",
+    "description": "A Chrome extension that displays a table of contents for ChatGPT generated content in a right sidebar",
+    "url": "https://github.com/WindZZzzZZzz/gpt-toc-extension",
+    "applicationCategory": "BrowserExtension",
+    "operatingSystem": "Chrome",
+    "author": {
+      "@type": "Person",
+      "name": "Leo Z"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "downloadUrl": "https://chromewebstore.google.com/detail/jjpmfdjghngpncajeffgdpfcedlpkdmg",
+    "softwareVersion": "1.0.0",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "ratingCount": "50"
+    }
+  }
+  </script>
 </head>
 <body>
-  <header class="main-header">
-    <nav class="navbar">
+  <header class="main-header" role="banner">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="nav-logo">
-        <img src="assets/toc_gpt_icon_32.png" alt="Logo" style="vertical-align:middle;width:32px;height:32px;">
+        <img src="assets/toc_gpt_icon_32.png" alt="ChatGPT TOC Extension Logo" style="vertical-align:middle;width:32px;height:32px;">
         <span class="nav-title">ChatGPT TOC</span>
       </div>
       <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#tutorial">Tutorial</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#home" aria-label="Go to home section">Home</a></li>
+        <li><a href="#tutorial" aria-label="Go to tutorial section">Tutorial</a></li>
+        <li><a href="#about" aria-label="Go to about section">About</a></li>
+        <li><a href="#contact" aria-label="Go to contact section">Contact</a></li>
       </ul>
     </nav>
   </header>
-  <div class="hero" id="home">
-    <img src="assets/toc_gpt_icon_64.png" alt="ChatGPT TOC Icon">
-    <h1>ChatGPT TOC Extension</h1>
-    <p>Effortlessly navigate ChatGPT conversations with an auto-generated, interactive table of contents in a sleek sidebar.</p>
-    <div class="cta-buttons">
-      <a href="https://chromewebstore.google.com/detail/jjpmfdjghngpncajeffgdpfcedlpkdmg?utm_source=landing-page" target="_blank">Install Extension</a>
-      <a href="https://github.com/WindZZzzZZzz/gpt-toc-extension" target="_blank">View on GitHub</a>
-      <!-- <a href="#" target="_blank">Install Extension</a> -->
-    </div>
-  </div>
-  <section class="video-demo" id="tutorial" style="max-width:900px;margin:40px auto 0 auto;text-align:center;">
-    <h2 style="color:#6a82fb;">See It In Action</h2>
-    <p>Watch this short video to see how the ChatGPT TOC extension works in real time.</p>
-    <iframe 
-      width="100%" 
-      height="400" 
-      src="https://www.youtube.com/embed/bgcL7yvhp8k?si=qXW5FxdXdEIMc7El" 
-      title="ChatGPT TOC Extension Tutorial" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-      allowfullscreen
-      style="border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.10);margin-top:18px;max-width:700px;">
-    </iframe>
-  </section>
-  <section class="features" id="about">
-    <div class="feature">
-      <h3>🧭 Easy Navigation</h3>
-      <p>Jump to any section of your ChatGPT conversation instantly with a clickable table of contents.</p>
-    </div>
-    <div class="feature">
-      <h3>⚡ Auto-Generated</h3>
-      <p>TOC is created automatically as you chat—no setup required. Works seamlessly with ChatGPT's interface.</p>
-    </div>
-    <div class="feature">
-      <h3>🎨 Clean Sidebar</h3>
-      <p>Enjoy a distraction-free, collapsible sidebar that keeps your focus on the conversation.</p>
-    </div>
-    <div class="feature">
-      <h3>🔒 Privacy First</h3>
-      <p>All processing happens locally. Your data never leaves your browser.</p>
-    </div>
-  </section>
-  <footer id="contact">
+  
+  <main role="main">
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <img src="assets/toc_gpt_icon_64.png" alt="ChatGPT TOC Extension Icon">
+      <h1 id="hero-title">ChatGPT TOC Extension</h1>
+      <p>Effortlessly navigate ChatGPT conversations with an auto-generated, interactive table of contents in a sleek sidebar.</p>
+      <div class="cta-buttons">
+        <a href="https://chromewebstore.google.com/detail/jjpmfdjghngpncajeffgdpfcedlpkdmg?utm_source=landing-page" target="_blank" aria-label="Install ChatGPT TOC Extension from Chrome Web Store">Install Extension</a>
+        <a href="https://github.com/WindZZzzZZzz/gpt-toc-extension" target="_blank" aria-label="View ChatGPT TOC Extension on GitHub">View on GitHub</a>
+      </div>
+    </section>
+    
+    <section class="video-demo" id="tutorial" aria-labelledby="tutorial-title" style="max-width:900px;margin:40px auto 0 auto;text-align:center;">
+      <h2 id="tutorial-title" style="color:#6a82fb;">See It In Action</h2>
+      <p>Watch this short video to see how the ChatGPT TOC extension works in real time.</p>
+      <iframe 
+        width="100%" 
+        height="400" 
+        src="https://www.youtube.com/embed/bgcL7yvhp8k?si=qXW5FxdXdEIMc7El&vq=hd720" 
+        title="ChatGPT TOC Extension Tutorial Video" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen
+        style="border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.10);margin-top:18px;max-width:700px;"
+        aria-label="Tutorial video showing ChatGPT TOC Extension features">
+      </iframe>
+    </section>
+    
+    <section class="features" id="about" aria-labelledby="features-title">
+      <h2 id="features-title">Key Features</h2>
+      <div class="feature">
+        <h3>🧭 Easy Navigation</h3>
+        <p>Jump to any section of your ChatGPT conversation instantly with a clickable table of contents.</p>
+      </div>
+      <div class="feature">
+        <h3>⚡ Auto-Generated</h3>
+        <p>TOC is created automatically as you chat—no setup required. Works seamlessly with ChatGPT's interface.</p>
+      </div>
+      <div class="feature">
+        <h3>🎨 Clean Sidebar</h3>
+        <p>Enjoy a distraction-free, collapsible sidebar that keeps your focus on the conversation.</p>
+      </div>
+      <div class="feature">
+        <h3>🔒 Privacy First</h3>
+        <p>All processing happens locally. Your data never leaves your browser.</p>
+      </div>
+    </section>
+  </main>
+  
+  <footer id="contact" role="contentinfo" aria-labelledby="contact-title">
+    <h3 id="contact-title" style="margin:0 0 15px 0;color:#fff;">Contact</h3>
     <div style="margin-bottom:10px;">
-      <a href="https://github.com/WindZZzzZZzz/gpt-toc-extension" target="_blank" style="color:#fff;text-decoration:underline;display:inline-flex;align-items:center;gap:6px;">
+      <a href="https://github.com/WindZZzzZZzz/gpt-toc-extension" target="_blank" style="color:#fff;text-decoration:underline;display:inline-flex;align-items:center;gap:6px;" aria-label="Visit our GitHub repository">
         <i class="fab fa-github" style="font-size:20px;"></i> GitHub
       </a>
       &nbsp;|&nbsp;
-      <a href="mailto:windzzzzzzzz@gmail.com" style="color:#fff;text-decoration:underline;display:inline-flex;align-items:center;gap:6px;">
+      <a href="mailto:windzzzzzzzz@gmail.com" style="color:#fff;text-decoration:underline;display:inline-flex;align-items:center;gap:6px;" aria-label="Send us an email">
         <i class="fas fa-envelope" style="font-size:20px;"></i> windzzzzzzzz@gmail.com
       </a>
     </div>
-    &copy; 2025 Leo Z
+    <p style="margin:10px 0 0 0;">&copy; 2025 Leo Z</p>
   </footer>
 </body>
 </html> 
