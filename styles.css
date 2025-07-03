@@ -30,6 +30,8 @@
   flex-shrink: 0;
 }
 
+
+
 .toc-header h3 {
   margin: 0;
   font-size: 16px;
@@ -83,6 +85,36 @@
   background: #f8f9fa;
   border-bottom: 1px solid #e5e5e5;
   margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.toc-group-header-clickable:hover {
+  background: #e9ecef;
+  cursor: pointer;
+}
+
+.toc-group-collapse-icon {
+  color: #666;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.toc-group-collapse-icon:hover {
+  color: #333;
+}
+
+.toc-group-text {
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.toc-group-content {
+  transition: height 0.2s ease, opacity 0.2s ease;
 }
 
 .toc-group-title {
@@ -118,6 +150,7 @@
   border-left: 3px solid transparent;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 32px;
 }
 
@@ -137,6 +170,8 @@
   line-height: 1.4;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  flex: 1;
+  margin-right: 8px;
 }
 
 /* Loading and Empty States */
@@ -192,75 +227,230 @@
   }
 }
 
-/* Dark mode support for ChatGPT */
+/* Manual dark mode support */
+.dark-mode #chatgpt-toc-sidebar {
+  background: #1a1a1a !important;
+  border-left-color: #333 !important;
+}
+
+.dark-mode .toc-header {
+  background: #2a2a2a !important;
+  border-bottom-color: #333 !important;
+}
+
+.dark-mode .toc-header h3 {
+  color: #fff !important;
+}
+
+.dark-mode .toc-close {
+  color: #ccc !important;
+}
+
+.dark-mode .toc-close:hover {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+
+
+.dark-mode .toc-group-header {
+  background: #2a2a2a !important;
+  border-bottom-color: #333 !important;
+}
+
+.dark-mode .toc-group-header-clickable:hover {
+  background: #333 !important;
+  cursor: pointer;
+}
+
+.dark-mode .toc-group-collapse-icon {
+  color: #ccc !important;
+}
+
+.dark-mode .toc-group-collapse-icon:hover {
+  color: #fff !important;
+}
+
+.dark-mode .toc-group-title {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .toc-group-preview {
+  color: #ccc !important;
+}
+
+.dark-mode .toc-group-separator {
+  background: #333 !important;
+}
+
+.dark-mode .toc-item:hover {
+  background: #2a2a2a !important;
+}
+
+.dark-mode .toc-item.active {
+  background: #333 !important;
+}
+
+.dark-mode .toc-text {
+  color: #fff !important;
+}
+
+.dark-mode .toc-loading,
+.dark-mode .toc-empty {
+  color: #ccc !important;
+}
+
+.dark-mode .toc-content {
+  background: #1a1a1a !important;
+}
+
+.dark-mode .toc-content::-webkit-scrollbar-track {
+  background: #2a2a2a !important;
+}
+
+.dark-mode .toc-content::-webkit-scrollbar-thumb {
+  background: #555 !important;
+}
+
+.dark-mode .toc-content::-webkit-scrollbar-thumb:hover {
+  background: #777 !important;
+}
+
+.dark-mode #chatgpt-toc-toggle {
+  background: #555 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-mode #chatgpt-toc-toggle:hover {
+  background: #666 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-mode .toc-item:focus {
+  outline: 2px solid #fff !important;
+  outline-offset: -2px;
+}
+
+.dark-mode .toc-close:focus {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px;
+}
+
+.dark-mode #chatgpt-toc-toggle:focus {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px;
+}
+
+.dark-mode .toc-h1 .toc-text {
+  color: #fff !important;
+}
+.dark-mode .toc-h2 .toc-text {
+  color: #f0f0f0 !important;
+}
+.dark-mode .toc-h3 .toc-text {
+  color: #e0e0e0 !important;
+}
+.dark-mode .toc-h4 .toc-text {
+  color: #d0d0d0 !important;
+}
+.dark-mode .toc-h5 .toc-text {
+  color: #c0c0c0 !important;
+}
+.dark-mode .toc-h6 .toc-text {
+  color: #b0b0b0 !important;
+}
+
+.dark-mode .toc-collapse-icon {
+  color: #ccc !important;
+}
+
+/* Dark mode support for system/browser theme */
 @media (prefers-color-scheme: dark) {
   #chatgpt-toc-sidebar {
     background: #1a1a1a;
     border-left-color: #333;
   }
-  
+
   .toc-header {
     background: #2a2a2a;
     border-bottom-color: #333;
   }
-  
+
   .toc-header h3 {
     color: #fff;
   }
-  
+
   .toc-close {
     color: #ccc;
   }
-  
+
   .toc-close:hover {
     background: #333;
     color: #fff;
   }
-  
+
   .toc-group-header {
     background: #2a2a2a;
     border-bottom-color: #333;
   }
-  
-  .toc-group-title {
-    color: #10a37f;
+
+  .toc-group-header-clickable:hover {
+    background: #333;
+    cursor: pointer;
   }
-  
+
+  .toc-group-title {
+    color: #e0e0e0;
+  }
+
   .toc-group-preview {
     color: #ccc;
   }
-  
+
   .toc-group-separator {
     background: #333;
   }
-  
+
   .toc-item:hover {
     background: #2a2a2a;
   }
-  
+
   .toc-item.active {
-    background: #1a3a1a;
+    background: #333;
   }
-  
+
   .toc-text {
     color: #fff;
   }
-  
+
   .toc-loading,
   .toc-empty {
     color: #ccc;
   }
-  
+
   .toc-content::-webkit-scrollbar-track {
     background: #2a2a2a;
   }
-  
+
   .toc-content::-webkit-scrollbar-thumb {
     background: #555;
   }
-  
+
   .toc-content::-webkit-scrollbar-thumb:hover {
     background: #777;
+  }
+
+  /* Dark mode toggle button */
+  #chatgpt-toc-toggle {
+    background: #555;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  #chatgpt-toc-toggle:hover {
+    background: #666;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -294,6 +484,23 @@
 #chatgpt-toc-toggle:focus {
   outline: 2px solid #fff;
   outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .toc-item:focus {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+  }
+
+  .toc-close:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  #chatgpt-toc-toggle:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
 }
 
 /* TOC Heading Level Styles */
@@ -331,22 +538,22 @@
 
 @media (prefers-color-scheme: dark) {
   .toc-h1 .toc-text {
-    color: #4ef2c3;
+    color: #fff;
   }
   .toc-h2 .toc-text {
-    color: #10a37f;
+    color: #f0f0f0;
   }
   .toc-h3 .toc-text {
-    color: #64b5f6;
+    color: #e0e0e0;
   }
   .toc-h4 .toc-text {
-    color: #aaa;
+    color: #d0d0d0;
   }
   .toc-h5 .toc-text {
-    color: #888;
+    color: #c0c0c0;
   }
   .toc-h6 .toc-text {
-    color: #666;
+    color: #b0b0b0;
   }
 }
 
@@ -357,6 +564,15 @@
   text-align: center;
   font-size: 14px;
   user-select: none;
+  color: #666;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .toc-collapse-icon {
+    color: #ccc;
+  }
 }
 
 /* Children container for subheadings */

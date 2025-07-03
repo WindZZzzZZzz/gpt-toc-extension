@@ -6,8 +6,10 @@ class ChatGPTTOC {
     this.headings = [];
     this.responseGroups = [];
     this.collapsedHeadings = new Set(); // Track collapsed headings by groupIndex-headingIndex
+    this.collapsedGroups = new Set(); // Track collapsed groups by groupIndex
     this.rightArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="4,3 8,6 4,9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     this.downArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="3,4 6,8 9,4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    this.isDarkMode = false;
     this.init();
   }
 
@@ -23,6 +25,9 @@ class ChatGPTTOC {
     
     // Start observing for content changes
     this.observeContentChanges();
+    
+    // Start observing for theme changes
+    this.observeThemeChanges();
   }
 
   waitForChatGPT() {
@@ -54,6 +59,9 @@ class ChatGPTTOC {
     
     document.body.appendChild(this.sidebar);
     
+    // Initialize theme
+    this.updateTheme();
+    
     // Add close button functionality
     const closeButton = document.getElementById('toc-close');
     closeButton.addEventListener('click', () => {
@@ -67,6 +75,8 @@ class ChatGPTTOC {
         this.toggleSidebar();
       }
     });
+
+
     // Attach event delegation for collapse/expand and scroll only once
     const tocContent = document.getElementById('toc-content');
     tocContent.addEventListener('click', (e) => {
@@ -226,25 +236,44 @@ class ChatGPTTOC {
     }
     let tocHTML = '';
     this.responseGroups.forEach((group, groupIndex) => {
+      const isGroupCollapsed = this.collapsedGroups.has(groupIndex);
       tocHTML += `
         <div class="toc-group-header toc-group-header-clickable" data-group="${groupIndex}">
-          <span class="toc-group-title">Response ${groupIndex + 1}</span>
-          <span class="toc-group-preview">${group.preview}</span>
+          <div class="toc-group-text">
+            <span class="toc-group-title">Response ${groupIndex + 1}</span>
+            <span class="toc-group-preview">${group.preview}</span>
+          </div>
+          <span class="toc-group-collapse-icon">${isGroupCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>
         </div>
       `;
       // Render headings as a nested tree
-      tocHTML += this.renderHeadingsTree(group.headings, groupIndex);
+      tocHTML += `<div class="toc-group-content" data-group="${groupIndex}" style="display:${isGroupCollapsed ? 'none' : 'block'};">${this.renderHeadingsTree(group.headings, groupIndex)}</div>`;
       if (groupIndex < this.responseGroups.length - 1) {
         tocHTML += '<div class="toc-group-separator"></div>';
       }
     });
     tocContent.innerHTML = tocHTML;
-    // Group header click scrolls to response
+    // Group header click toggles collapse and scrolls to response
     const groupHeaders = tocContent.querySelectorAll('.toc-group-header-clickable');
     groupHeaders.forEach((header) => {
-      header.addEventListener('click', () => {
+      header.addEventListener('click', (e) => {
+        // Don't trigger if clicking on the collapse icon
+        if (e.target.closest('.toc-group-collapse-icon')) {
+          return;
+        }
         const groupIndex = parseInt(header.getAttribute('data-group'));
         this.scrollToResponse(groupIndex);
+      });
+    });
+    
+    // Add collapse icon functionality
+    const collapseIcons = tocContent.querySelectorAll('.toc-group-collapse-icon');
+    collapseIcons.forEach((icon) => {
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent triggering the header click
+        const groupHeader = icon.closest('.toc-group-header');
+        const groupIndex = parseInt(groupHeader.getAttribute('data-group'));
+        this.toggleGroupCollapse(groupIndex);
       });
     });
   }
@@ -279,8 +308,8 @@ class ChatGPTTOC {
         const isCollapsed = this.collapsedHeadings.has(collapseKey);
         const hasSub = node.children.length > 0;
         html += `<div class="toc-item toc-h${node.level}${isCollapsed ? ' collapsed' : ''}" data-group="${groupIndex}" data-heading="${node.index}" style="padding-left: ${(node.level - 1) * 16}px;">
-          ${hasSub ? `<span class=\"toc-collapse-icon\" style=\"margin-right:4px;cursor:pointer;display:inline-flex;align-items:center;\">${isCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>` : ''}
-          <span class=\"toc-text\">${node.text}</span>
+          <span class="toc-text">${node.text}</span>
+          ${hasSub ? `<span class="toc-collapse-icon">${isCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>` : ''}
         </div>`;
         if (hasSub) {
           html += `<div class="toc-children" style="display:${isCollapsed ? 'none' : 'block'};">${renderNodes(node.children, node.index)}</div>`;
@@ -312,6 +341,25 @@ class ChatGPTTOC {
       setTimeout(() => {
         message.style.backgroundColor = '';
       }, 2000);
+    }
+  }
+
+  toggleGroupCollapse(groupIndex) {
+    if (this.collapsedGroups.has(groupIndex)) {
+      this.collapsedGroups.delete(groupIndex);
+    } else {
+      this.collapsedGroups.add(groupIndex);
+    }
+    
+    // Update the UI
+    const groupHeader = document.querySelector(`[data-group="${groupIndex}"].toc-group-header`);
+    const groupContent = document.querySelector(`.toc-group-content[data-group="${groupIndex}"]`);
+    const collapseIcon = groupHeader?.querySelector('.toc-group-collapse-icon');
+    
+    if (groupContent && collapseIcon) {
+      const isCollapsed = this.collapsedGroups.has(groupIndex);
+      groupContent.style.display = isCollapsed ? 'none' : 'block';
+      collapseIcon.innerHTML = isCollapsed ? this.rightArrowSVG : this.downArrowSVG;
     }
   }
 
@@ -352,6 +400,37 @@ class ChatGPTTOC {
         this.extractHeadings();
       }
     }, 2000);
+  }
+
+  detectDarkMode() {
+    // Check if the system/browser prefers dark color scheme
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  updateTheme() {
+    const wasDarkMode = this.isDarkMode;
+    this.isDarkMode = this.detectDarkMode();
+    
+    if (wasDarkMode !== this.isDarkMode && this.sidebar) {
+      if (this.isDarkMode) {
+        this.sidebar.classList.add('dark-mode');
+      } else {
+        this.sidebar.classList.remove('dark-mode');
+      }
+    }
+  }
+
+  observeThemeChanges() {
+    // Initial theme detection
+    this.updateTheme();
+    
+    // Listen for system theme changes
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', () => {
+        this.updateTheme();
+      });
+    }
   }
 }
 
