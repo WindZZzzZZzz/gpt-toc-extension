@@ -186,4 +186,43 @@ footer {
   .nav-title {
     font-size: 1.1rem;
   }
+}
+
+.privacy-link-bottom {
+  width: 100%;
+  text-align: center;
+  margin: 24px 0 18px 0;
+}
+.privacy-link-bottom a {
+  display: inline-block;
+  padding: 10px 28px;
+  background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+  color: #fff;
+  border-radius: 22px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(106,130,251,0.10);
+  transition: background 0.18s, color 0.18s;
+}
+.privacy-link-bottom a:hover, .privacy-link-bottom a:focus {
+  background: #fff;
+  color: #6a82fb;
+  border: 1px solid #6a82fb;
+}
+
+.privacy-fixed-link {
+  position: fixed;
+  right: 24px;
+  bottom: 18px;
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 500;
+  background: none;
+  border: none;
+  z-index: 200;
+  font-size: 1rem;
+  transition: color 0.18s;
+}
+.privacy-fixed-link:hover, .privacy-fixed-link:focus {
+  color: #fc5c7d;
 } 
