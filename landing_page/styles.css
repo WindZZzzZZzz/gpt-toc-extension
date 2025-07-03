@@ -1,7 +1,7 @@
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  background: #f7f8fa;
+  background: linear-gradient(120deg, #f7f8fa 0%, #e0e7ff 100%);
   color: #222;
 }
 .hero {
@@ -42,6 +42,13 @@ body {
   background: #6a82fb;
   color: #fff;
 }
+.video-demo {
+  background: linear-gradient(135deg, #f7f8fa 0%, #e0e7ff 100%);
+  border-radius: 18px;
+  padding: 36px 18px 32px 18px;
+  box-shadow: 0 2px 12px rgba(106,130,251,0.07);
+  margin-bottom: 40px;
+}
 .features {
   max-width: 900px;
   margin: 40px auto;
@@ -49,6 +56,18 @@ body {
   flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
+  background: linear-gradient(135deg, #f7f8fa 0%, #e9f7ef 100%);
+  border-radius: 18px;
+  padding: 36px 18px 32px 18px;
+  box-shadow: 0 2px 12px rgba(106,130,251,0.07);
+  margin-bottom: 40px;
+}
+.features h2 {
+  width: 100%;
+  text-align: center;
+  color: #6a82fb;
+  margin-bottom: 30px;
+  font-size: 2rem;
 }
 .feature {
   background: linear-gradient(135deg, #f3f8ff 0%, #e9f7ef 100%);
@@ -110,13 +129,14 @@ footer {
   z-index: 100;
 }
 .navbar {
-  max-width: 1100px;
-  margin: 0 auto;
+  margin: 2px auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   height: 64px;
+  background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+  box-shadow: 0 2px 8px rgba(106,130,251,0.10);
 }
 .nav-logo {
   display: flex;
@@ -126,7 +146,7 @@ footer {
 .nav-title {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #6a82fb;
+  color: #fff;
   letter-spacing: 1px;
 }
 .nav-links {
@@ -140,17 +160,18 @@ footer {
   display: inline-block;
 }
 .nav-links a {
-  color: #222;
+  color: #fff;
   text-decoration: none;
   font-weight: 500;
   font-size: 1.05rem;
   padding: 8px 14px;
   border-radius: 18px;
   transition: background 0.18s, color 0.18s;
+  background: rgba(255,255,255,0.08);
 }
 .nav-links a:hover, .nav-links a:focus {
-  background: #6a82fb;
-  color: #fff;
+  background: #fff;
+  color: #6a82fb;
 }
 @media (max-width: 700px) {
   .navbar {
