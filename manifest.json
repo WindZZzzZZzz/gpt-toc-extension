@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Table of Contents",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Display a table of contents for ChatGPT generated content in a right sidebar",
   "permissions": [],
   "host_permissions": [
