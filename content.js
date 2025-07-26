@@ -110,7 +110,6 @@ class ChatGPTTOC {
       }
     });
   }
-
   addToggleButton() {
     // Create toggle button
     const toggleButton = document.createElement('button');
