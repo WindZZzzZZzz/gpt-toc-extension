@@ -119,6 +119,7 @@ class ChatGPTTOC {
     toggleButton.setAttribute('aria-label', 'Toggle table of contents sidebar');
     toggleButton.setAttribute('aria-expanded', 'false');
     toggleButton.setAttribute('aria-controls', 'chatgpt-toc-sidebar');
+    const toggleColors = this.getToggleButtonColors();
     
     // Position the button in the top-right corner
     toggleButton.style.cssText = `
@@ -126,7 +127,7 @@ class ChatGPTTOC {
       top: 80px;
       right: 20px;
       z-index: 10000;
-      background: #10a37f;
+      background: ${toggleColors.base};
       color: white;
       border: none;
       border-radius: 8px;
@@ -156,16 +157,30 @@ class ChatGPTTOC {
     });
     
     toggleButton.addEventListener('mouseenter', () => {
-      toggleButton.style.background = '#0d8a6f';
+      toggleButton.style.background = this.getToggleButtonColors().hover;
     });
     
     toggleButton.addEventListener('mouseleave', () => {
-      toggleButton.style.background = '#10a37f';
+      toggleButton.style.background = this.getToggleButtonColors().base;
     });
     
     document.body.appendChild(toggleButton);
     // Ensure button is visible if sidebar is hidden
     toggleButton.style.display = this.isVisible ? 'none' : '';
+  }
+
+  getToggleButtonColors() {
+    if (this.isDarkMode) {
+      return {
+        base: 'linear-gradient(180deg, #0f766e 0%, #115e59 100%)',
+        hover: 'linear-gradient(180deg, #0d9488 0%, #0f766e 100%)'
+      };
+    }
+
+    return {
+      base: '#10a37f',
+      hover: '#0d8a6f'
+    };
   }
 
   toggleSidebar() {
@@ -421,6 +436,11 @@ class ChatGPTTOC {
       } else {
         this.sidebar.classList.remove('dark-mode');
       }
+    }
+
+    const toggleButton = document.getElementById('chatgpt-toc-toggle');
+    if (toggleButton) {
+      toggleButton.style.background = this.getToggleButtonColors().base;
     }
   }
 
