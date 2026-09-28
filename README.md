@@ -57,6 +57,28 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Support
 
+### ChatGPT compatibility and regression tests
+
+The current ChatGPT UI can use `data-markdown-text-style="assistant-message"`
+instead of `data-message-author-role="assistant"`. The extension supports both,
+uses the preceding user message for each response, and updates the TOC when
+messages stream, change, or disappear. Only messages currently present in the
+page DOM can be indexed; virtualized history outside the DOM is not fetched.
+
+After editing, reload **ChatGPT Table of Contents** in `chrome://extensions/`,
+then refresh the ChatGPT tab. If the installed copy is in another directory,
+load this directory as the unpacked extension and disable the old copy.
+
+For regression checks, serve the repository locally:
+
+```sh
+python -m http.server 8765 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8765/tests/regression.html`.
+The page runs browser tests for current/legacy markup, streaming, navigation,
+empty states, target replacement, literal text rendering, and observer loops.
+
 If you encounter any issues or have questions:
 1. Open an issue on GitHub
 2. Check the browser console for error messages

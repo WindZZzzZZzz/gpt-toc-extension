@@ -10,34 +10,25 @@ class ChatGPTTOC {
     this.rightArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="4,3 8,6 4,9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     this.downArrowSVG = '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:middle"><polyline points="3,4 6,8 9,4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     this.isDarkMode = false;
+    this.lastPath = location.pathname;
+    this.lastTOCSignature = null;
     this.init();
   }
 
   init() {
-    // Wait for ChatGPT to load
-    this.waitForChatGPT();
-    
     // Create and inject sidebar
     this.createSidebar();
     
     // Add toggle button
     this.addToggleButton();
+
+    this.extractHeadings();
     
     // Start observing for content changes
     this.observeContentChanges();
     
     // Start observing for theme changes
     this.observeThemeChanges();
-  }
-
-  waitForChatGPT() {
-    const checkInterval = setInterval(() => {
-      const mainContent = document.querySelector('main');
-      if (mainContent) {
-        clearInterval(checkInterval);
-        this.extractHeadings();
-      }
-    }, 1000);
   }
 
   createSidebar() {
@@ -141,12 +132,6 @@ class ChatGPTTOC {
     
     toggleButton.addEventListener('click', () => {
       this.toggleSidebar();
-      // If sidebar is opening, refresh the TOC
-      if (!this.isVisible) {
-        setTimeout(() => {
-          this.extractHeadings();
-        }, 500);
-      }
     });
     
     toggleButton.addEventListener('keydown', (e) => {
@@ -197,6 +182,7 @@ class ChatGPTTOC {
     
     // Focus management for accessibility
     if (this.isVisible) {
+      this.extractHeadings();
       // Focus the close button when opening
       const closeButton = document.getElementById('toc-close');
       if (closeButton) {
@@ -206,45 +192,75 @@ class ChatGPTTOC {
   }
 
   extractHeadings() {
-    // Find all prompts and assistant message containers
-    const userPrompts = document.querySelectorAll('[data-message-author-role="user"]');
-    const assistantMessages = document.querySelectorAll('[data-message-author-role="assistant"]');
-    this.responseGroups = [];
-    assistantMessages.forEach((message, messageIndex) => {
-      const promptElement = messageIndex < userPrompts.length ? userPrompts[messageIndex] : null;
+    if (this.lastPath !== location.pathname) {
+      this.lastPath = location.pathname;
+      this.collapsedGroups.clear();
+      this.collapsedHeadings.clear();
+      this.lastTOCSignature = null;
+    }
+    const root = document.querySelector('main');
+    // Keep legacy support, but also recognize the current ChatGPT markup.
+    // Do not collect generic .markdown elements: user messages can contain them too.
+    const candidates = root ? Array.from(root.querySelectorAll(
+      '[data-message-author-role="assistant"], [data-markdown-text-style="assistant-message"]'
+    )) : [];
+    const messages = new Set(candidates.map(message =>
+      message.closest('[data-message-author-role="assistant"]') ||
+      message.closest('[data-chatgpt-selection-message-id]') || message
+    ));
+    const userPrompts = root ? Array.from(root.querySelectorAll(
+      '[data-message-author-role="user"], [data-user-message-bubble]'
+    )) : [];
+    const groups = [];
+    messages.forEach(message => {
+      // Match the preceding prompt in DOM order, not by array index (one prompt
+      // can have several assistant messages, and old turns may be virtualized).
+      let promptElement = null;
+      for (const user of userPrompts) {
+        if (user.compareDocumentPosition(message) & Node.DOCUMENT_POSITION_FOLLOWING) {
+          promptElement = user;
+        }
+      }
       const promptText = promptElement ? promptElement.textContent.trim() : '';
-      const prompt = promptText.length > 50 ? promptText.substring(0, 200) + '...' : promptText;
+      const prompt = promptText.length > 200 ? promptText.substring(0, 200) + '...' : promptText;
       // Find headings within this specific message
-      const headings = message.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const headings = Array.from(message.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+        .filter(heading => !heading.matches('.sr-only, [data-conversation-role]') &&
+          !heading.closest('[hidden], [aria-hidden="true"]'));
       // Get a preview of the message content for the group title
       const messageText = message.textContent.trim();
       const preview = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
-      this.responseGroups.push({
-        messageIndex: messageIndex,
+      groups.push({
+        messageIndex: groups.length,
         messageElement: message,
         promptElement: promptElement,
-        headings: Array.from(headings),
+        headings: headings,
         prompt: prompt,
         preview: preview
       });
     });
+    const signature = JSON.stringify(groups.map(group => [
+      group.prompt, group.headings.map(heading => [heading.tagName, heading.textContent.trim()])
+    ]));
+    const sameTargets = groups.length === this.responseGroups.length && groups.every((group, i) => {
+      const previous = this.responseGroups[i];
+      return group.messageElement === previous.messageElement &&
+        group.promptElement === previous.promptElement &&
+        group.headings.length === previous.headings.length &&
+        group.headings.every((heading, j) => heading === previous.headings[j]);
+    });
+    this.responseGroups = groups;
     // Flatten all headings for backward compatibility
     this.headings = this.responseGroups.flatMap(group => group.headings);
+    if (sameTargets && signature === this.lastTOCSignature) return;
+    this.lastTOCSignature = signature;
     this.updateTOC();
   }
 
-  isInAssistantMessage(element) {
-    // Check if the element is within an assistant message
-    let parent = element.parentElement;
-    while (parent) {
-      if (parent.getAttribute('data-message-author-role') === 'assistant' ||
-          parent.classList.contains('markdown') ||
-          parent.classList.contains('prose')) {
-        return true;
-      }
-      parent = parent.parentElement;
-    }
-    return false;
+  escapeHTML(text) {
+    const span = document.createElement('span');
+    span.textContent = text;
+    return span.innerHTML;
   }
 
   updateTOC() {
@@ -260,13 +276,13 @@ class ChatGPTTOC {
         <div class="toc-group-header toc-group-header-clickable" data-group="${groupIndex}">
           <div class="toc-group-text">
             <span class="toc-group-title">Prompt ${groupIndex + 1}</span>
-            <span class="toc-group-prompt">${group.prompt}</span>
+            <span class="toc-group-prompt">${this.escapeHTML(group.prompt)}</span>
           </div>
           <span class="toc-group-collapse-icon">${isGroupCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>
         </div>
       `;
       // Render headings as a nested tree
-      tocHTML += `<div class="toc-group-content" data-group="${groupIndex}" style="display:${isGroupCollapsed ? 'none' : 'block'};">${this.renderHeadingsTree(group.headings, groupIndex)}</div>`;
+      tocHTML += `<div class="toc-group-content" data-group="${groupIndex}" style="display:${isGroupCollapsed ? 'none' : 'block'};">${group.headings.length ? this.renderHeadingsTree(group.headings, groupIndex) : '<div class="toc-empty">No headings in this response</div>'}</div>`;
       if (groupIndex < this.responseGroups.length - 1) {
         tocHTML += '<div class="toc-group-separator"></div>';
       }
@@ -327,7 +343,7 @@ class ChatGPTTOC {
         const isCollapsed = this.collapsedHeadings.has(collapseKey);
         const hasSub = node.children.length > 0;
         html += `<div class="toc-item toc-h${node.level}${isCollapsed ? ' collapsed' : ''}" data-group="${groupIndex}" data-heading="${node.index}" style="padding-left: ${(node.level - 1) * 16}px;">
-          <span class="toc-text">${node.text}</span>
+          <span class="toc-text">${this.escapeHTML(node.text)}</span>
           ${hasSub ? `<span class="toc-collapse-icon">${isCollapsed ? this.rightArrowSVG : this.downArrowSVG}</span>` : ''}
         </div>`;
         if (hasSub) {
@@ -403,22 +419,32 @@ class ChatGPTTOC {
   }
 
   observeContentChanges() {
-    // Poll every 2 seconds to check for content changes
-    let lastContentHash = '';
-    setInterval(() => {
-      // Only check the last assistant message
-      const assistantMessages = document.querySelectorAll('[data-message-author-role="assistant"]');
-      if (assistantMessages.length === 0) {
-        // No assistant messages, do not update TOC
-        return;
-      }
-      const lastMsg = assistantMessages[assistantMessages.length - 1];
-      let lastText = lastMsg ? lastMsg.textContent : '';
-      if (lastText !== lastContentHash) {
-        lastContentHash = lastText;
+    let refreshTimer = null;
+    this.contentObserver = new MutationObserver(mutations => {
+      const changed = mutations.some(mutation => {
+        const element = mutation.target.nodeType === Node.ELEMENT_NODE
+          ? mutation.target : mutation.target.parentElement;
+        return element && !element.closest('#chatgpt-toc-sidebar, #chatgpt-toc-toggle');
+      });
+      // Throttle instead of debounce so streaming replies still update regularly.
+      if (!changed || refreshTimer !== null) return;
+      refreshTimer = setTimeout(() => {
+        refreshTimer = null;
         this.extractHeadings();
-      }
-    }, 2000);
+      }, 200);
+    });
+    this.contentObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['data-message-author-role', 'data-markdown-text-style',
+        'data-user-message-bubble', 'data-chatgpt-selection-message-id', 'hidden', 'aria-hidden']
+    });
+    // SPA navigation can change the URL without changing the rendered text.
+    setInterval(() => {
+      if (this.lastPath !== location.pathname) this.extractHeadings();
+    }, 1000);
   }
 
   detectDarkMode() {
